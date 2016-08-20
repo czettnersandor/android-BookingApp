@@ -1,6 +1,9 @@
 package com.czettner.bookingapp;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -9,6 +12,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -45,6 +49,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     protected void startSearchIntent() {
+        ConnectivityManager cm =
+                (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+
+        // If not connected to the internet, notify the user before attempting to search
+        if (!isConnected) {
+            Toast.makeText(getApplicationContext(), R.string.device_not_connected, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         Intent intent = new Intent(MainActivity.this, ResultsActivity.class);
         String searchString = searchText.getText().toString();
         intent.putExtra(EXTRA_SEARCH_STRING, searchString);

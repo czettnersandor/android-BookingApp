@@ -3,4 +3,5 @@
     <string name="search">Search</string>
     <string name="no_results_found">No results found. Please navigate back and correct the search query</string>
     <string name="invalid_server_response">Invalid server resposne</string>
+    <string name="device_not_connected">Device is not connected to the internet.</string>
 </resources>
