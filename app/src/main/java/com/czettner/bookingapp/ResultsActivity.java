@@ -11,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,7 +29,7 @@ public class ResultsActivity extends AppCompatActivity {
     private static final String LOG_TAG = "ResultsActivityLog";
 
     private ListView listView;
-    private ArrayList<Book> books = new ArrayList<Book>();
+    private ArrayList<Book> books = new ArrayList<>();
     BookAdapter itemsAdapter;
     ProgressBar progressBar;
     TextView nodataText;
@@ -79,6 +80,11 @@ public class ResultsActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Convert the JSON format to ArrayList of Book objects
+     * @param jsonObject JSON returned by Google API
+     * @return The Book list, however it's also a global variable
+     */
     private ArrayList<Book> jsonToBookArray(JSONObject jsonObject) {
         books.clear();
         try {
@@ -96,9 +102,14 @@ public class ResultsActivity extends AppCompatActivity {
                 if (volumeInfo.has("title")) {
                     title = volumeInfo.getString("title");
                 }
+
                 if (volumeInfo.has("subtitle")) {
                     subtitle = volumeInfo.getString("subtitle");
+                } else if (volumeInfo.has("description")) {
+                    // If there's no subtitle, use description
+                    subtitle = volumeInfo.getString("description");
                 }
+
                 if (volumeInfo.has("authors")) {
                     JSONArray authors = volumeInfo.getJSONArray("authors");
                     // TODO too many nested loops and conditions, refactor this to a method
@@ -165,6 +176,10 @@ public class ResultsActivity extends AppCompatActivity {
                 conn.connect();
                 int response = conn.getResponseCode();
                 Log.d(LOG_TAG, "The response is: " + response);
+
+                if (response != 200) {
+                    Toast.makeText(getApplicationContext(), R.string.invalid_server_response, Toast.LENGTH_SHORT).show();
+                }
                 is = conn.getInputStream();
 
                 // Convert the InputStream into a string
@@ -179,9 +194,9 @@ public class ResultsActivity extends AppCompatActivity {
         }
 
         /**
-         *
+         * Reading from the stream to a JSONObject
          * @param is InputStream object
-         * @return
+         * @return JSONObject or null on failure
          */
         private JSONObject readFromStream(InputStream is) {
             try {

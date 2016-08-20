@@ -14,6 +14,7 @@ public class Book {
         this.authors = authors;
     }
 
+    // Getters and setters
     public String getTitle() {
         return title;
     }

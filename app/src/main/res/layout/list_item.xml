@@ -14,6 +14,7 @@
     <TextView
         android:id="@+id/subtitle"
         style="@style/list_item_text"
+        android:maxLines="2"
         tools:text="A little longer subtitle" />
 
     <TextView
